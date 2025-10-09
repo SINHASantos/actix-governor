@@ -15,13 +15,13 @@ categories = ["web-programming::http-server"]
 actix-web = { version = "4", default-features = false }
 actix-http = "3"
 futures = "0.3"
-governor = "0.8.0"
+governor = "0.10.1"
 log = { version = "0.4", optional = true }
 
 [dev-dependencies]
-actix-rt = "2.10"
+actix-rt = "2.11"
 actix-web = { version = "4", features = ["macros"] }
-serde = { version = "1.0.213",  features = ["derive"] }
+serde = { version = "1.0.228",  features = ["derive"] }
 
 [features]
 logger = ["log"]

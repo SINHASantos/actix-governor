@@ -584,6 +584,13 @@ impl<M: RateLimitingMiddleware<QuantaInstant>> GovernorConfig<PeerIpKeyExtractor
     }
 }
 
+impl<K: KeyExtractor, M: RateLimitingMiddleware<QuantaInstant>> GovernorConfig<K, M> {
+    /// Access internal [`governor::RateLimiter`]
+    pub fn limiter(&self) -> SharedRateLimiter<K::Key, M> {
+        self.limiter.clone()
+    }
+}
+
 /// Governor middleware factory.
 pub struct Governor<K: KeyExtractor, M: RateLimitingMiddleware<QuantaInstant>> {
     key_extractor: K,

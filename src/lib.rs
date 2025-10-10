@@ -139,11 +139,22 @@
 //!
 //! # Common pitfalls
 //!
+//! ## Creating independant rate limiters
+//!
 //! Do not construct the same configuration multiple times, unless explicitly wanted!
 //! This will create an independent rate limiter for each configuration!
 //!
 //! Instead pass the same configuration reference into [`Governor::new()`],
 //! like it is described in the example.
+//!
+//! ## Memory leak (because of keys accumulation)
+//!
+//! If your application gets a lot of traffic and your rate limiter ends up with a lot of keys (for example, user tokens), you may observe some kind of memory leak: your application consumes more and more memory over time.
+//!
+//! In this case, you may want to regularly call [`governor::RateLimiter::retain_recent`] followed by [`governor::RateLimiter::shrink_to_fit`].
+//! These methods need to be called on the underlying [`governor::RateLimiter`] which can be accessed using [`GovernorConfig::limiter`].
+//!
+//! As you probably already have a Tokio context, you can do this from inside a task that is spawned after creating your rate limiter (`GovernorConfig` can be cloned while keeping the same underlying rate limiter).
 
 #![warn(
     rust_2018_idioms,
@@ -365,7 +376,7 @@ impl<M: RateLimitingMiddleware<QuantaInstant>> GovernorConfigBuilder<PeerIpKeyEx
     /// Set the mode of the governor middleware.
     ///
     /// If permissive is set to true, the middleware will not block requests.
-    /// See also [`GovernorExtractor`](crate::GovernorExtractor).
+    /// See also [`GovernorExtractor`].
     pub const fn const_permissive(mut self, permissive: bool) -> Self {
         self.permissive = permissive;
         self
@@ -461,7 +472,7 @@ impl<K: KeyExtractor, M: RateLimitingMiddleware<QuantaInstant>> GovernorConfigBu
     /// Set the mode of the governor middleware.
     ///
     /// If permissive is set to true, the middleware will not block requests.
-    /// See also [`GovernorExtractor`](crate::GovernorExtractor).
+    /// See also [`GovernorExtractor`].
     pub fn permissive(&mut self, permissive: bool) -> &mut Self {
         self.permissive = permissive;
         self

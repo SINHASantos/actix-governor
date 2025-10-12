@@ -49,7 +49,7 @@ impl KeyExtractor for UserToken {
     }
 
     #[cfg(feature = "log")]
-    fn key_name(&self, key: &Self::Key) -> Option<String> {
+    fn key_name(&self, _key: &Self::Key) -> Option<String> {
         Some("String".to_owned())
     }
 }

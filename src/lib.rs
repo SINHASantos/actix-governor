@@ -48,13 +48,14 @@
 //!         .finish()
 //!         .unwrap();
 //!
+//!     // Configuration should be created before the server
 //!     HttpServer::new(move || {
 //!         App::new()
 //!             // Enable Governor middleware
 //!             .wrap(Governor::new(&governor_conf))
 //!             // Route hello world service
 //!             .route("/", web::get().to(index))
-//!    })
+//!     })
 //!     .bind("127.0.0.1:8080")?
 //!     .run()
 //!     .await
@@ -146,6 +147,8 @@
 //!
 //! Instead pass the same configuration reference into [`Governor::new()`],
 //! like it is described in the example.
+//!
+//! Cloning does not create an independent rate limiter.
 //!
 //! ## Memory leak (because of keys accumulation)
 //!
@@ -549,6 +552,8 @@ impl<K: KeyExtractor, M: RateLimitingMiddleware<QuantaInstant>> GovernorConfigBu
 #[derive(Debug)]
 #[must_use]
 /// Configuration for the Governor middleware.
+///
+/// Contains the current state of the rate limiter.
 pub struct GovernorConfig<K: KeyExtractor, M: RateLimitingMiddleware<QuantaInstant>> {
     key_extractor: K,
     limiter: SharedRateLimiter<K::Key, M>,

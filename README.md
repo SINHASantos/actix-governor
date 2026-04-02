@@ -34,6 +34,7 @@ async fn main() -> std::io::Result<()> {
         .finish()
         .unwrap();
 
+    // Configuration should be created before the server
     HttpServer::new(move || {
         App::new()
             // Enable Governor middleware

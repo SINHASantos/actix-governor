@@ -2,7 +2,7 @@ use actix_web::dev::{forward_ready, Service, ServiceRequest, ServiceResponse};
 use actix_web::http::header::{HeaderName, HeaderValue};
 use actix_web::{body::MessageBody, Error};
 use actix_web::ResponseError;
-use futures::{future, TryFutureExt};
+use futures::TryFutureExt;
 use governor::clock::{Clock, DefaultClock};
 use governor::middleware::{NoOpMiddleware, StateInformationMiddleware};
 
@@ -323,7 +323,8 @@ where
                     let fut = self.service.call(req);
                     Either::Right(fut.map_ok(|resp| resp.map_into_left_body()))
                 } else {
-                    Either::Left(Either::Right(future::err(e.into())))
+                    let response = req.into_response(e.error_response());
+                    Either::Left(Either::Right(ok(response.map_into_right_body())))
                 }
             }
         }

@@ -98,6 +98,12 @@
 //!
 //! Check out the [custom_key](https://github.com/AaronErhardt/actix-governor/blob/main/examples/custom_key_ip.rs) example to see how a custom key extractor can be implemented.
 //!
+//! # Error handling
+//!
+//! The way key extraction errors are handled was changed in version `0.11.0`.
+//!
+//! Previously, errors were returned immediately. After `0.11.0`, errors are propagated to other middlewares as error responses, which allows for additional processing.
+//!
 //! # Customizing error responses
 //!
 //! There are two errors that might occur during rate-limiting.
